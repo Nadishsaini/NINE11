@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NINE 11 // ELIMINATE THE NOISE</title>
+    <style>
+        :root {
+            --bg: #050505;
+            --accent: #ffffff;
+            --text-dim: #888;
+            --glass: rgba(209, 255, 38, 0.02); 
+            --border: rgba(209, 255, 38, 0.15);
+            --lime: #d1ff26;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg);
+            background-image: radial-gradient(rgba(209, 255, 38, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+            background-attachment: fixed;
+            color: white;
+            font-family: 'Inter', -apple-system, sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* --- BACKGROUND VIDEO --- */
+        .video-bg {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100vh;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .video-bg video {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            opacity: 0.2;
+            filter: grayscale(100%) contrast(120%);
+        }
+
+        .video-bg::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle, transparent 20%, var(--bg) 95%);
+        }
+
+        /* --- NAVIGATION --- */
+        nav {
+            position: fixed;
+            top: 0; width: 100%;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            transition: 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        .logo-container { width: 120px; transition: 0.2s ease-out; }
+        .logo-container img { width: 100%; height: auto; }
+
+        /* --- SCATTERED PARTICLE EFFECT --- */
+        .title-container { display: inline-block; position: relative; }
+
+        .particle {
+            position: absolute;
+            background-color: var(--lime);
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0;
+            z-index: 10;
+        }
+
+        @keyframes particleBurst {
+            0% { transform: translate(0, 0) scale(1); opacity: 1; }
+            100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+        }
+
+        /* --- SECTIONS --- */
+        section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 120px 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-size: clamp(3.5rem, 12vw, 7rem);
+            font-weight: 900;
+            letter-spacing: -4px;
+            text-transform: uppercase;
+            line-height: 0.8;
+        }
+
+        .hero h2 {
+            font-size: 0.9rem;
+            color: var(--lime);
+            letter-spacing: 10px;
+            font-weight: 400;
+            margin-top: 25px;
+            background: rgba(0,0,0,0.4);
+            padding: 5px 15px;
+            backdrop-filter: blur(5px);
+        }
+
+        /* --- CONTENT BOXES --- */
+        .content-box {
+            max-width: 850px;
+            background: var(--glass);
+            border: 1px solid var(--border);
+            padding: 60px 40px;
+            border-radius: 24px;
+            backdrop-filter: blur(20px);
+            transition: 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            margin-bottom: 60px;
+            width: 100%;
+        }
+
+        .content-box:hover {
+            border-color: var(--lime);
+            box-shadow: 0 0 40px rgba(209, 255, 38, 0.08);
+            transform: translateY(-8px);
+        }
+
+        .content-box h3 {
+            font-size: 0.75rem;
+            color: var(--lime);
+            letter-spacing: 5px;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+        }
+
+        .content-box p {
+            font-size: 1.4rem;
+            font-weight: 500;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            line-height: 1.3;
+        }
+
+        .sub-text {
+            font-size: 1rem !important;
+            margin-top: 25px;
+            color: var(--text-dim) !important;
+            border-top: 1px solid var(--border);
+            padding-top: 25px;
+            font-weight: 400 !important;
+            text-align: left;
+        }
+
+        /* --- REELS STYLES --- */
+        .reel-container {
+            width: 100%;
+            max-width: 320px;
+            aspect-ratio: 9/16;
+            background: #000;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid var(--border);
+            margin: 20px auto;
+        }
+        #reel-player { width: 100%; height: 100%; object-fit: cover; }
+        .reel-overlay {
+            position: absolute;
+            bottom: 0; left: 0; width: 100%;
+            padding: 20px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.9));
+            text-align: left;
+        }
+        .tag { color: var(--lime); font-size: 10px; font-weight: 800; border: 1px solid var(--lime); padding: 2px 6px; }
+
+        /* --- CHAT STYLES --- */
+        #chat-display {
+            height: 250px;
+            overflow-y: auto;
+            background: rgba(0,0,0,0.4);
+            padding: 20px;
+            text-align: left;
+            border: 1px solid var(--border);
+            margin-bottom: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            border-radius: 8px;
+        }
+        .msg { margin-bottom: 8px; }
+        .msg.user { color: var(--lime); }
+        .msg.system { color: #555; font-style: italic; }
+        .chat-input-area { display: flex; gap: 10px; }
+        #chat-input {
+            flex-grow: 1;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            color: white;
+            padding: 12px;
+            outline: none;
+            border-radius: 4px;
+        }
+
+        /* --- BUTTONS --- */
+        .btn {
+            margin-top: 35px;
+            padding: 14px 36px;
+            background: var(--lime);
+            color: black;
+            text-decoration: none;
+            font-weight: 900;
+            font-size: 11px;
+            letter-spacing: 2px;
+            border-radius: 4px;
+            transition: 0.3s;
+            text-transform: uppercase;
+            display: inline-block;
+            cursor: pointer;
+            border: none;
+        }
+        .btn-sm {
+            background: var(--lime);
+            color: black;
+            border: none;
+            padding: 8px 16px;
+            font-size: 10px;
+            font-weight: 900;
+            cursor: pointer;
+            text-transform: uppercase;
+            border-radius: 2px;
+        }
+
+        /* --- ID MODAL & LINKTREE HYBRID --- */
+        #id-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95);
+            backdrop-filter: blur(15px);
+            z-index: 2000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            overflow-y: auto;
+            padding: 40px 0;
+        }
+
+        .id-card {
+            width: 90%;
+            max-width: 420px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--lime);
+            border-radius: 15px;
+            padding: 30px;
+            position: relative;
+            box-shadow: 0 0 60px rgba(209, 255, 38, 0.15);
+            text-align: left;
+        }
+
+        .id-header { display: flex; gap: 20px; align-items: center; margin-bottom: 30px; }
+        .profile-img { width: 70px; height: 70px; background: #222; border: 1px solid var(--lime); border-radius: 50%; display: flex; align-items: center; justify-content: center; overflow: hidden;}
+        .profile-img img { width: 100%; height: 100%; object-fit: cover; }
+
+        .user-name { font-size: 24px; font-weight: 900; color: white; line-height: 1; }
+        .serial { font-family: 'Courier New', monospace; color: var(--lime); font-size: 12px; }
+
+        .social-hub { margin-top: 25px; border-top: 1px solid var(--border); padding-top: 20px; }
+        .hub-title { font-size: 9px; color: var(--lime); letter-spacing: 2px; margin-bottom: 15px; }
+        .hub-link {
+            display: block;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            padding: 12px;
+            color: white;
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-align: center;
+            border-radius: 6px;
+            transition: 0.2s;
+        }
+        .hub-link:hover { background: var(--lime); color: black; }
+
+        .close-id { margin-top: 30px; color: white; text-transform: uppercase; letter-spacing: 2px; font-size: 10px; cursor: pointer; opacity: 0.4; }
+    </style>
+</head>
+<body>
+
+    <div id="id-overlay">
+        <div class="id-card">
+            <div class="id-header">
+                <div class="profile-img">
+                    <img src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=NINE11" id="id-avatar">
+                </div>
+                <div>
+                    <p style="font-size: 8px; color: #666; letter-spacing: 1px;">NODE_ID</p>
+                    <div class="user-name" id="display-name">---</div>
+                    <div class="serial" id="display-serial">0000-0000</div>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 25px;">
+                <p style="font-size: 9px; color: #666; letter-spacing: 1px;">STATUS</p>
+                <div style="font-weight: 700; color: white; font-size: 13px;">VERIFIED_NODE // ACTIVE</div>
+            </div>
+
+            <div class="social-hub">
+                <div class="hub-title">SIGNAL_CHANNELS</div>
+                <a href="#" class="hub-link">INSTAGRAM // FEED</a>
+                <a href="#" class="hub-link">PORTFOLIO // NODES</a>
+                <a href="#" class="hub-link">X // BROADCAST</a>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; border-top: 1px solid rgba(209,255,38,0.1); padding-top: 20px; margin-top: 10px;">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=NINE11_NODE" style="filter: invert(1); width: 45px; height: 45px;">
+                <div style="text-align: right;">
+                    <p style="font-size: 8px; color: #444;">ESTABLISHED 2026</p>
+                    <p style="font-size: 10px; color: var(--lime); font-weight: 900;">NINE 11</p>
+                </div>
+            </div>
+        </div>
+        <div class="close-id" onclick="closeInterface()">[ Terminate Session ]</div>
+    </div>
+
+    <nav id="navbar">
+        <div class="logo-container" id="logo">
+            <img src="new logo.png" alt="NINE11">
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="video-bg">
+            <video autoplay muted loop playsinline><source src="VID-20260304-WA0086.mp4" type="video/mp4"></video>
+        </div>
+        <div class="title-container" id="title-burst"><h1>NINE 11</h1></div>
+        <h2>ELIMINATE THE NOISE</h2>
+    </section>
+
+    <section>
+        <div class="content-box">
+            <h3>01 // MISSION</h3>
+            <p>Elevate skills. Connect elite talent. Strip away the social clutter to focus purely on professional growth.</p> 
+            <div class="sub-text">
+                • DECENTRALIZED INTELLIGENCE: WE FUNCTION AS A FILTER FOR THE MODERN WORKFORCE.<br>
+                • SIGNAL VS NOISE: PERFORMANCE IS THE ONLY CURRENCY.
+            </div>
+        </div>
+
+        <div class="content-box">
+            <h3>02 // STRATEGY</h3>
+            <p>Quality over quantity. Every connection made within this node is a calculated step toward collective innovation.</p>
+            <button class="btn" onclick="document.querySelector('#id-gen-trigger').scrollIntoView({behavior: 'smooth'})">Initialize Strategy</button>
+        </div>
+    </section>
+
+    <section id="reels-section">
+        <div class="content-box">
+            <h3>04 // SIGNAL STREAM</h3>
+            <p>HIGH-UTILITY INTELLIGENCE FEED</p>
+            <div class="reel-container">
+                <video id="reel-player" autoplay muted loop playsinline src="YOUR_VIDEO_1.mp4"></video>
+                <div class="reel-overlay">
+                    <span class="tag" id="reel-tag">#TECH_DATA</span>
+                    <p style="font-size: 12px; margin-top: 5px;" id="reel-title">NODE_CORE_UPDATE // 01</p>
+                </div>
+            </div>
+            <div style="display: flex; justify-content: center; gap: 20px; margin-top: 10px;">
+                <button class="btn-sm" onclick="changeReel(-1)">PREV</button>
+                <button class="btn-sm" onclick="changeReel(1)">NEXT</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="chat-section">
+        <div class="content-box">
+            <h3>05 // ENCRYPTED COMMS</h3>
+            <div id="chat-display">
+                <div class="msg system">[SYSTEM] NODE_INITIALIZED. WAITING FOR UPLINK...</div>
+            </div>
+            <div class="chat-input-area">
+                <input type="text" id="chat-input" placeholder="TYPE MESSAGE..." onkeypress="if(event.key==='Enter') sendMsg()">
+                <button class="btn-sm" onclick="sendMsg()">SEND</button>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-top: 15px;">
+                <span onclick="downloadLog()" style="color: var(--lime); font-size: 9px; cursor: pointer; text-decoration: underline;">DOWNLOAD_LOG.TXT</span>
+                <span onclick="clearChat()" style="color: #ff4d4d; font-size: 9px; cursor: pointer; text-decoration: underline;">WIPE_LOGS</span>
+            </div>
+        </div>
+    </section>
+
+    <section id="id-gen-trigger">
+        <div class="content-box">
+            <h3>06 // IDENTIFICATION</h3>
+            <div id="id-init-view">
+                <p>Generate your unique NINE11 ID to authorize your node access.</p>
+                <button class="btn" onclick="handleIDRequest()">Generate NINE11 ID</button>
+            </div>
+            <div id="id-active-view" style="display: none;">
+                <p>Identity confirmed. Node registry active.</p>
+                <button class="btn" onclick="showStoredID()">View Profile Card</button>
+                <div id="revoke-trigger" onclick="revokeAccess()" style="margin-top:20px; font-size:10px; color:#ff4d4d; cursor:pointer;">[ Revoke Access ]</div>
+            </div>
+        </div>
+    </section>
+
+<script>
+    const AUTHORIZED_KEYS = { "ALPHA_9": "OP_0", "NEON_11": "ST_1", "ELITE_NODE": "AG_1" };
+    
+    // --- REEL DATA ---
+    const REEL_DATA = [
+        { src: "YOUR_VIDEO_1.mp4", tag: "#TECH_DATA", title: "NODE_CORE_UPDATE // 01" },
+        { src: "YOUR_VIDEO_2.mp4", tag: "#CYBER_INTEL", title: "SIGNAL_DECODE // 02" }
+    ];
+    let currentReel = 0;
+
+    window.onload = () => {
+        setTimeout(createParticles, 500);
+        checkRegistry();
+        loadChatHistory();
+        updateReelDisplay();
+    };
+
+    function checkRegistry() {
+        const hasAlias = localStorage.getItem('nine11_alias');
+        document.getElementById('id-init-view').style.display = hasAlias ? 'none' : 'block';
+        document.getElementById('id-active-view').style.display = hasAlias ? 'block' : 'none';
+        return !!hasAlias;
+    }
+
+    function handleIDRequest() {
+        const key = prompt("ENTER ACCESS KEY:");
+        if (AUTHORIZED_KEYS[key]) {
+            const name = prompt("ACCESS GRANTED. ENTER ALIAS:");
+            if (name && name.trim() !== "") {
+                const serial = `${Math.random().toString(36).toUpperCase().substring(2,6)}-${Math.random().toString(36).toUpperCase().substring(2,6)}`;
+                localStorage.setItem('nine11_alias', name.toUpperCase());
+                localStorage.setItem('nine11_serial', serial);
+                checkRegistry();
+                showStoredID();
+            }
+        } else { alert("UNAUTHORIZED."); }
+    }
+
+    function showStoredID() {
+        const name = localStorage.getItem('nine11_alias');
+        document.getElementById('display-name').innerText = name;
+        document.getElementById('display-serial').innerText = localStorage.getItem('nine11_serial');
+        document.getElementById('id-avatar').src = `https://api.dicebear.com/7.x/bottts-neutral/svg?seed=${name}`;
+        document.getElementById('id-overlay').style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeInterface() {
+        document.getElementById('id-overlay').style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+
+    function revokeAccess() {
+        if(confirm("DELETE IDENTITY?")) { localStorage.clear(); location.reload(); }
+    }
+
+    // --- REEL LOGIC ---
+    function changeReel(dir) {
+        currentReel = (currentReel + dir + REEL_DATA.length) % REEL_DATA.length;
+        updateReelDisplay();
+    }
+
+    function updateReelDisplay() {
+        const player = document.getElementById('reel-player');
+        const tag = document.getElementById('reel-tag');
+        const title = document.getElementById('reel-title');
+        
+        player.src = REEL_DATA[currentReel].src;
+        tag.innerText = REEL_DATA[currentReel].tag;
+        title.innerText = REEL_DATA[currentReel].title;
+    }
+
+    // --- CHAT SYSTEM ---
+    function sendMsg() {
+        const input = document.getElementById('chat-input');
+        if (!checkRegistry()) { alert("ID REQUIRED."); handleIDRequest(); return; }
+        const alias = localStorage.getItem('nine11_alias');
+        const text = input.value.trim().toUpperCase();
+        if (text) {
+            const msg = { type: 'user', sender: alias, content: text };
+            renderMessage(msg);
+            saveToHistory(msg);
+            input.value = "";
+            setTimeout(() => {
+                const sys = { type: 'system', sender: 'SERVER', content: 'PACKET_RECEIVED // SECURE.' };
+                renderMessage(sys);
+                saveToHistory(sys);
+            }, 800);
+        }
+    }
+
+    function renderMessage(msg) {
+        const display = document.getElementById('chat-display');
+        display.innerHTML += `<div class="msg ${msg.type}">[${msg.sender}]: ${msg.content}</div>`;
+        display.scrollTop = display.scrollHeight;
+    }
+
+    function saveToHistory(msg) {
+        let log = JSON.parse(localStorage.getItem('nine11_chat_log') || "[]");
+        log.push(msg);
+        localStorage.setItem('nine11_chat_log', JSON.stringify(log.slice(-50)));
+    }
+
+    function loadChatHistory() {
+        const log = JSON.parse(localStorage.getItem('nine11_chat_log') || "[]");
+        log.forEach(msg => renderMessage(msg));
+    }
+
+    function clearChat() {
+        if(confirm("WIPE LOGS?")) { localStorage.removeItem('nine11_chat_log'); location.reload(); }
+    }
+
+    function downloadLog() {
+        const log = JSON.parse(localStorage.getItem('nine11_chat_log') || "[]");
+        if (log.length === 0) return alert("NO LOG DATA FOUND.");
+        const text = log.map(m => `[${m.sender}]: ${m.content}`).join('\n');
+        const blob = new Blob([text], { type: 'text/plain' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `NINE11_LOG_${Date.now()}.txt`;
+        a.click();
+    }
+
+    function createParticles() {
+        const container = document.getElementById('title-burst');
+        for (let i = 0; i < 40; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            const angle = Math.random() * Math.PI * 2;
+            const rad = 100 + Math.random() * 100;
+            p.style.setProperty('--tx', Math.cos(angle) * rad + 'px');
+            p.style.setProperty('--ty', Math.sin(angle) * rad + 'px');
+            p.style.width = '2px'; p.style.height = '2px';
+            p.style.left = '50%'; p.style.top = '50%';
+            p.style.animation = `particleBurst 1.2s forwards`;
+            container.appendChild(p);
+        }
+    }
+
+    window.addEventListener('scroll', () => {
+        const logo = document.getElementById('logo');
+        const nav = document.getElementById('navbar');
+        let scrollY = window.scrollY;
+        if(logo) logo.style.width = Math.max(50, 120 - (scrollY / 4)) + 'px';
+        if(nav) nav.style.background = scrollY > 50 ? "rgba(5,5,5,0.9)" : "transparent";
+    });
+</script>
+</body>
+<footer style="padding: 40px; text-align: center; font-size: 10px; color: #444; letter-spacing: 2px;">
+    &copy; 2026 NINE 11 // ALL RIGHTS RESERVED. <br>
+    UNAUTHORIZED DUPLICATION OF INTERFACE OR ASSETS IS A VIOLATION OF NODE PROTOCOL.
+</footer>
+</html>
